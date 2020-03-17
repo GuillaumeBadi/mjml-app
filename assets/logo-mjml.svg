@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 19.2.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Calque_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 1024 1024" style="enable-background:new 0 0 1024 1024;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:url(#Rectangle-1_1_);}
+	.st1{fill:#FFFFFF;}
+</style>
+<title>Logo</title>
+<desc>Created with Sketch.</desc>
+<g id="Page-1">
+	<g id="Logo">
+		
+			<linearGradient id="Rectangle-1_1_" gradientUnits="userSpaceOnUse" x1="-254.2534" y1="1536.5005" x2="-254.2485" y2="1535.5005" gradientTransform="matrix(1024 0 0 -1024 260865 1573377)">
+			<stop  offset="0" style="stop-color:#F46E42"/>
+			<stop  offset="1" style="stop-color:#E3515B"/>
+		</linearGradient>
+		<path id="Rectangle-1" class="st0" d="M62,0.5h900c34.2,0,62,27.8,62,62v900c0,34.2-27.8,62-62,62H62c-34.2,0-62-27.8-62-62v-900
+			C0,28.3,27.8,0.5,62,0.5z"/>
+		<g id="Group" transform="translate(288.000000, 318.000000)">
+			<circle id="Oval-1" class="st1" cx="398" cy="49.5" r="49"/>
+			<circle id="Oval-1-Copy-2" class="st1" cx="398" cy="338.5" r="49"/>
+			<circle id="Oval-1-Copy" class="st1" cx="50" cy="194.5" r="49"/>
+			<path class="st1" d="M261.4,98.5H49.5C22.3,98.5,0,76.2,0,49v0C0,21.8,22.3-0.5,49.5-0.5l211.9,0c27.2,0,49.5,22.3,49.5,49.5v0
+				C310.9,76.2,288.6,98.5,261.4,98.5z"/>
+			<path class="st1" d="M397.5,243.5H185.5c-27.2,0-49.5-22.3-49.5-49.5v0c0-27.2,22.3-49.5,49.5-49.5h211.9
+				c27.2,0,49.5,22.3,49.5,49.5v0C447,221.2,424.7,243.5,397.5,243.5z"/>
+			<path class="st1" d="M261.4,388H49.5C22.3,388,0,365.7,0,338.5v0C0,311.3,22.3,289,49.5,289h211.9c27.2,0,49.5,22.3,49.5,49.5v0
+				C310.9,365.7,288.6,388,261.4,388z"/>
+		</g>
+	</g>
+</g>
+</svg>
