@@ -9,6 +9,7 @@ import uniqBy from 'lodash/uniqBy'
 import { MdAdd as IconAdd } from 'react-icons/md'
 
 import sendEmail from 'helpers/sendEmail'
+import { compile } from 'helpers/preview-content'
 
 import { isModalOpened, closeModal } from 'reducers/modals'
 import { addAlert } from 'reducers/alerts'
@@ -25,6 +26,8 @@ export default connect(
     const TargetEmails = state.settings.getIn(['api', 'TargetEmails'], [])
     const LastEmails = state.settings.getIn(['api', 'LastEmails'], [])
     const Subject = state.settings.getIn(['api', 'Subject'], '')
+    const previewContent = state.settings.get('previewContent')
+
     return {
       content: get(state, 'preview.content', ''),
       isOpened: isModalOpened(state, 'send'),
@@ -37,6 +40,7 @@ export default connect(
       emails: uniq([...(SenderEmail ? [SenderEmail] : []), ...TargetEmails, ...LastEmails]).map(
         email => ({ label: email, value: email }),
       ),
+      previewContent,
     }
   },
   {
@@ -96,9 +100,21 @@ export default connect(
       e.stopPropagation()
       e.preventDefault()
 
-      const { addAlert, content } = this.props
-
+      const { addAlert, content: raw, previewContent } = this.props
       const { Subject, APIKey, APISecret, SenderName, SenderEmail, TargetEmails } = this.state
+
+      let content = raw
+
+      try {
+        content = await compile({
+          raw,
+          engine: previewContent.get('engine'),
+          variables: previewContent.get('variables'),
+        })
+      } catch (err) {
+        this.props.addAlert(`[Template Compiler Error] ${err.message}`, 'error')
+        throw new Error(err)
+      }
 
       try {
         await sendEmail({

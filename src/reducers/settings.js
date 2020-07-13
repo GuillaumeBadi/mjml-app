@@ -15,6 +15,7 @@ export default handleActions(
         mjml: Map(payload.mjml),
         previewSize: Map(payload.previewSize),
         snippets: List(payload.snippets),
+        previewContent: Map(payload.previewContent),
       })
     },
 

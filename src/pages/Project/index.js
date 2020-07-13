@@ -101,11 +101,11 @@ export default connect(
       try {
         const trashed = await trash(fileName)
         const stillExists = await fileExists(fileName)
-        
+
         if (stillExists) {
           throw new Error('File still exists')
         }
-        
+
         this.props.addAlert('File successfully removed', 'success')
       } catch (e) {
         this.props.addAlert('Could not delete file', 'error')

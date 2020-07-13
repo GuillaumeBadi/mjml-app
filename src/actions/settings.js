@@ -60,6 +60,10 @@ export function loadSettings() {
         desktop: 650,
       },
       snippets: [],
+      previewContent: {
+        engine: 'html',
+        variables: {},
+      },
     })
 
     // clean old format for TargetEmails
