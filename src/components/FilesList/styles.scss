@@ -163,3 +163,22 @@
   color: $yellow;
   padding: 20px;
 }
+
+.FilePreview--settings {
+  &-button {
+    position: absolute;
+    top: 0;
+    right: 10px;
+    pointer-events: auto;
+  }
+
+  &-modal {
+    .bordered {
+      border: 1px solid $evenLighterGrey;
+    }
+
+    .yaml-invalid {
+      color: $red;
+    }
+  }
+}

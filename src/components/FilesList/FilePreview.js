@@ -2,24 +2,66 @@ import React, { Component } from 'react'
 import cx from 'classnames'
 import { Motion, spring } from 'react-motion'
 import { connect } from 'react-redux'
+import isEqual from 'lodash/isEqual'
+import find from 'lodash/find'
 
 import Button from 'components/Button'
 import Iframe from 'components/Iframe'
 
 import { updateSettings } from 'actions/settings'
+import { addAlert } from 'reducers/alerts'
+import { compile } from 'helpers/preview-content'
 
 export default connect(
   state => ({
     preview: state.preview,
     previewSize: state.settings.get('previewSize'),
+    templating: state.settings.get('templating'),
   }),
   {
     updateSettings,
+    addAlert,
   },
 )(
   class FilePreview extends Component {
+    state = {
+      content: '',
+    }
+
+    componentDidUpdate(prevProps) {
+      const prev = {
+        engine: this.getProjectVariables(prevProps).engine,
+        variables: this.getProjectVariables(prevProps).variables,
+        raw: prevProps.preview ? prevProps.preview.content : '',
+      }
+
+      const current = {
+        engine: this.getProjectVariables(this.props).engine,
+        variables: this.getProjectVariables(this.props).variables,
+        raw: this.props.preview ? this.props.preview.content : '',
+      }
+
+      !isEqual(prev, current) && this.updateContent(current)
+    }
+
+    getProjectVariables = props => {
+      const { templating, iframeBase } = props
+      return find(templating, { projectPath: iframeBase }) || {}
+    }
+
+    updateContent = async params => {
+      try {
+        const content = await compile(params)
+        this.setState({ content })
+      } catch (err) {
+        this.props.addAlert(`[Template Compiler Error] ${err.message}`, 'error')
+        throw new Error(err)
+      }
+    }
+
     render() {
       const { preview, disablePointer, previewSize, onSetSize, iframeBase } = this.props
+      const { content } = this.state
 
       return (
         <div className="FilesList--preview">
@@ -55,7 +97,7 @@ export default connect(
                 </div>
                 {preview ? (
                   preview.type === 'html' ? (
-                    <Iframe base={iframeBase} value={preview.content} openLinks />
+                    <Iframe base={iframeBase} value={content} openLinks />
                   ) : preview.type === 'image' ? (
                     <img className="FileList--preview-image" src={`file://${preview.content}`} />
                   ) : null

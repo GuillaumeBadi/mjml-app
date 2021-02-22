@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import pathModule from 'path'
 import trash from 'trash'
 import { connect } from 'react-redux'
-
 import { FaCog, FaFolderOpen } from 'react-icons/fa'
 import {
   MdContentCopy as IconCopy,
@@ -12,6 +11,7 @@ import {
   MdNoteAdd as IconAdd,
   MdAutorenew as IconBeautify,
   MdSave as IconSave,
+  MdBuild as IconBuild,
 } from 'react-icons/md'
 
 import fs from 'fs'
@@ -35,6 +35,7 @@ import BackButton from './BackButton'
 import SendModal from './SendModal'
 import AddFileModal from './AddFileModal'
 import RemoveFileModal from './RemoveFileModal'
+import PreviewSettings from './PreviewSettings'
 
 export default connect(
   state => ({
@@ -54,6 +55,7 @@ export default connect(
     state = {
       path: this.props.location.query.path,
       activeFile: null,
+      showSettings: false,
     }
 
     componentDidMount() {
@@ -101,11 +103,11 @@ export default connect(
       try {
         const trashed = await trash(fileName)
         const stillExists = await fileExists(fileName)
-        
+
         if (stillExists) {
           throw new Error('File still exists')
         }
-        
+
         this.props.addAlert('File successfully removed', 'success')
       } catch (e) {
         this.props.addAlert('Could not delete file', 'error')
@@ -187,6 +189,9 @@ export default connect(
 
     openAddFileModal = () => this.props.openModal('addFile')
 
+    handleOpenSettings = () => this.setState({ showSettings: true })
+    handleCloseSettings = () => this.setState({ showSettings: false })
+
     checkForRelativePaths() {
       const { preview } = this.props
       const relativePathsRegex = new RegExp(/(?:href|src)=(["'])(?!mailto|https|http|data:).*?\1/g)
@@ -213,7 +218,7 @@ export default connect(
 
     render() {
       const { preview, preventAutoSave } = this.props
-      const { path, activeFile } = this.state
+      const { path, activeFile, showSettings } = this.state
 
       const rootPath = this.props.location.query.path
       const projectName = pathModule.basename(rootPath)
@@ -242,6 +247,10 @@ export default connect(
                   {'Beautify'}
                 </Button>,
               ]}
+              <Button transparent onClick={this.handleOpenSettings}>
+                <IconBuild style={{ marginRight: 5 }} />
+                {'Templating'}
+              </Button>
               <Button transparent onClick={this.handleOpenInBrowser}>
                 <FaFolderOpen style={{ marginRight: 5 }} />
                 {'Open'}
@@ -307,9 +316,14 @@ export default connect(
             />
           </div>
 
-          <SendModal />
+          <SendModal currentProjectPath={path} />
           <AddFileModal rootPath={path} onAdd={this.handleAddFile} />
           <RemoveFileModal rootPath={path} onRemove={this.handleRemoveFile} />
+          <PreviewSettings
+            currentProjectPath={path}
+            isOpened={showSettings}
+            onClose={this.handleCloseSettings}
+          />
         </div>
       )
     }

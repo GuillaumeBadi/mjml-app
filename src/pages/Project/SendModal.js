@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import get from 'lodash/get'
 import { connect } from 'react-redux'
 import debounce from 'lodash/debounce'
+import find from 'lodash/find'
 import { Creatable as Select } from 'react-select'
 import uniq from 'lodash/uniq'
 import uniqBy from 'lodash/uniqBy'
@@ -9,6 +10,7 @@ import uniqBy from 'lodash/uniqBy'
 import { MdAdd as IconAdd } from 'react-icons/md'
 
 import sendEmail from 'helpers/sendEmail'
+import { compile } from 'helpers/preview-content'
 
 import { isModalOpened, closeModal } from 'reducers/modals'
 import { addAlert } from 'reducers/alerts'
@@ -25,6 +27,7 @@ export default connect(
     const TargetEmails = state.settings.getIn(['api', 'TargetEmails'], [])
     const LastEmails = state.settings.getIn(['api', 'LastEmails'], [])
     const Subject = state.settings.getIn(['api', 'Subject'], '')
+
     return {
       content: get(state, 'preview.content', ''),
       isOpened: isModalOpened(state, 'send'),
@@ -37,6 +40,7 @@ export default connect(
       emails: uniq([...(SenderEmail ? [SenderEmail] : []), ...TargetEmails, ...LastEmails]).map(
         email => ({ label: email, value: email }),
       ),
+      templating: state.settings.get('templating'),
     }
   },
   {
@@ -96,9 +100,22 @@ export default connect(
       e.stopPropagation()
       e.preventDefault()
 
-      const { addAlert, content } = this.props
-
+      const { addAlert, content: raw, templating, currentProjectPath } = this.props
       const { Subject, APIKey, APISecret, SenderName, SenderEmail, TargetEmails } = this.state
+      const projectTemplating = find(templating, { projectPath: currentProjectPath }) || {}
+
+      let content = raw
+
+      try {
+        content = await compile({
+          raw,
+          engine: projectTemplating.engine,
+          variables: projectTemplating.variables,
+        })
+      } catch (err) {
+        this.props.addAlert(`[Template Compiler Error] ${err.message}`, 'error')
+        throw new Error(err)
+      }
 
       try {
         await sendEmail({
